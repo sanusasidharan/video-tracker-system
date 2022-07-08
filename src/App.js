@@ -4,7 +4,7 @@ function App() {
 
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
   const [captureVideo, setCaptureVideo] = React.useState(false);
-
+  const [imageBase64Data, setImageBase64Data] = React.useState("");
   const videoRef = React.useRef();
   const videoHeight = 480;
   const videoWidth = 640;
@@ -80,7 +80,20 @@ function App() {
     setCaptureVideo(false);
   }
 
-  return (
+ const getSnapShot = () => {
+   /*  Method that will return video screen shot
+    *  High quality --> toDataURL('image/jpg', 1);
+    *  Mid quality --> toDataURL('image/jpg', 0.5);
+    *  Low quality --> toDataURL('image/jpg', 0);
+   */
+   let canvas = document.createElement('canvas');
+   let ctx = canvas.getContext('2d');
+   let video = videoRef.current;
+   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+   return canvas.toDataURL('image/jpg', 1);
+ }
+
+ return (
       <div>
         <div style={{ textAlign: 'center', padding: '10px' }}>
           {
@@ -103,12 +116,17 @@ function App() {
                       <canvas ref={canvasRef} style={{ position: 'absolute' }} />
                     </div>
                   </div>
+
                   :
                   <div>loading...</div>
               :
               <>
               </>
         }
+        <button onClick={() => {
+          setImageBase64Data(getSnapShot())
+        }}> Save Image </button>
+        <img src={imageBase64Data} height={videoHeight} width={videoWidth} />
       </div>
   );
 }
